@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <PropertyGroup Label="NuGet" Condition="'$(MSBuildProjectExtension)' == '.vcxproj'">
+    <!--Enables PackageReference as a dependency mechanism in VC++ projects.-->
+    <TargetFrameworkMoniker>native,Version=v0.0</TargetFrameworkMoniker>
+
+    <!--<AssetTargetFallback>$(AssetTargetFallback);native</AssetTargetFallback>
+    <RestoreUseStaticGraphEvaluation Condition="'$(BuildingInsideVisualStudio)' == 'true'">true</RestoreUseStaticGraphEvaluation>
+    <ResolveNuGetPackages>false</ResolveNuGetPackages>-->
+  </PropertyGroup>
+
+</Project>
