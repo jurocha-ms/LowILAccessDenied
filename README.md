@@ -1,5 +1,15 @@
 # E_ACCESSDENIED When Debugging Low IL Processes
 
+## Abstract
+
+This sample project showcases an unexpected error when debugging a [`Low Integrity Level`](https://learn.microsoft.com/en-us/windows/win32/secauthz/mandatory-integrity-control) process.
+
+The Visual Studio solution consists of:
+- SandboxTest\
+  Simple C++/WinRT-based console application making a trivial HTTP call.
+- SandboxLauncher\
+  Console application that launches SandboxTest with Low Integrity Level.
+
 ## Steps to Reproduce
 
 1. Clone this repository.
