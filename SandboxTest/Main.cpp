@@ -25,7 +25,8 @@ int main(int argc, char ** argv)
 {
   winrt::init_apartment();
 
-  GetRequest().get();
-
+  printf("Pleas attach a debugger.\n");
   system("pause");
+
+  GetRequest().get();
 }
