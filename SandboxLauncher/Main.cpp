@@ -75,19 +75,22 @@ HRESULT CreateLowILProcess() noexcept
   const int32_t iCountRetry = 5;
   bool fCreateProcess = false;
   fCreateProcess = CreateProcessAsUser(
-        hMICToken,
-        nullptr,
-        (LPWSTR)commandLine.c_str(),
-        nullptr /*lpProcessAttributes*/,
-        nullptr /*lpThreadAttributes*/,
-        false /*bInheritHandles*/,
-        0 /*EXTENDED_STARTUP_INFO_PRESENT*/,
-        NULL /*lpEnvironment*/,
-        NULL /*lpCurrentDirectory*/, (LPSTARTUPINFO)&si, &processInfoSandbox);
+     hMICToken,
+     nullptr,
+     (LPWSTR)commandLine.c_str(),
+     nullptr                        /*lpProcessAttributes*/,
+     nullptr                        /*lpThreadAttributes*/,
+     false                          /*bInheritHandles*/,
+     0                              /*EXTENDED_STARTUP_INFO_PRESENT*/,
+     NULL                           /*lpEnvironment*/,
+     NULL                           /*lpCurrentDirectory*/,
+     (LPSTARTUPINFO)&si, &processInfoSandbox
+  );
 
   if (!fCreateProcess || processInfoSandbox.hProcess == NULL || processInfoSandbox.hThread == NULL)
   {
     auto err = HRESULT_FROM_WIN32(GetLastError());
+    //TODO: Fail
   }
 
   auto dwWaitStatus = WaitForSingleObject(hEventRemoter, 0);
