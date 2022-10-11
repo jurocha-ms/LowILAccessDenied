@@ -98,11 +98,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CppWinRT" Version="2.0.211028.7" />
   </ItemGroup>
-  <ItemGroup>
-    <!--
-    Used by the 'CopyFilesToOutputDirectory' target (more specifically, its '_CopyFilesMarkedCopyLocal' dependency')
-    to co-locate dependencies with the test binary.
-     -->
-    <ReferenceCopyLocalPaths  Include="$(OutputPath)..\SandboxTest\SandboxTest.exe" />
-  </ItemGroup>
 </Project>
