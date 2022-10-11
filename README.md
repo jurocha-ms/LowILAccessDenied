@@ -54,3 +54,5 @@ enableScripts: false
     This happens because the process is started with a Medium Integrity Level (or High, if Visual Studio is started as an Administrator).
 - The error message is frequently found in UWP apps that don't have the `Private networks` capability in the application manifest.\
   This is not the root issue here.
+- Using WinInet directly, the HTTP call succeeds under the same conditions.\
+  Likely, the problem lies in the interaction of the VS debugger with the C++/WinRT/COM stack.
