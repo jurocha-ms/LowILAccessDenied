@@ -1,6 +1,8 @@
 #include <winrt/base.h>
 #include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Networking.Sockets.h>
 #include <winrt/Windows.Web.Http.h>
+#include <winrt/Windows.Storage.Streams.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
@@ -12,6 +14,7 @@
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Web::Http;
 
+using winrt::hresult_error;
 using std::string;
 using std::wstring;
 
@@ -92,6 +95,7 @@ string HttpRequest(string site, string param)
 	}
 }
 
+// HTTP
 IAsyncAction GetRequest()
 {
 	try
@@ -103,7 +107,42 @@ IAsyncAction GetRequest()
 
 		wprintf(L"\n[SUCCESS]\nHTTP STATUS [%d]\n\nHTTP CONTENT:\n%s\n\n", response.StatusCode(), body.c_str());
 	}
-	catch (const winrt::hresult_error &e)
+	catch (const hresult_error& e)
+	{
+		wprintf(L"\n[FAILURE]\n[0x%x] %s\n", static_cast<unsigned int>(e.code()), e.message().c_str());
+	}
+}
+
+// WebSockets
+IAsyncAction SendReceive()
+{
+	using namespace winrt::Windows::Networking::Sockets;
+	using winrt::Windows::Storage::Streams::DataWriter;
+	using winrt::Windows::Storage::Streams::UnicodeEncoding;
+	try
+	{
+		auto socket = MessageWebSocket{};
+		socket.Control().MessageType(SocketMessageType::Utf8);
+		/*auto mrt = */socket.MessageReceived([](IWebSocket const& sender, MessageWebSocketMessageReceivedEventArgs const& args)
+			{
+				auto reader = args.GetDataReader();
+				reader.UnicodeEncoding(UnicodeEncoding::Utf8);
+
+				auto message = reader.ReadString(reader.UnconsumedBufferLength());
+				wprintf(L"\n[SUCCESS]\nWS MESSAGE:\n%s\n\n", message.c_str());
+			});
+
+		co_await socket.ConnectAsync(Uri{ L"wss://echo.websocket.events" });
+
+		//co_await mrt;
+
+		auto writer = DataWriter{ socket.OutputStream() };
+		auto sent = writer.WriteString(L"ECHO ME");
+		auto asyncSent = co_await writer.StoreAsync();
+
+		socket.Close();
+	}
+	catch (const hresult_error& e)
 	{
 		wprintf(L"\n[FAILURE]\n[0x%x] %s\n", static_cast<unsigned int>(e.code()), e.message().c_str());
 	}
@@ -116,7 +155,14 @@ int main(int argc, char ** argv)
 	printf("Please attach a debugger.\n");
 	system("PAUSE");
 
-	GetRequest().get();
+	if (argc < 2 || string{ argv[1] } == "http")
+	{
+		GetRequest().get();
+	}
+	else if (string{ argv[1] } == "ws")
+	{
+		SendReceive().get();
+	}
 
   // Successful case using raw WinInet.
   //auto response = HttpRequest("raw.githubusercontent.com", "microsoft/react-native-windows/main/.yarnrc.yml");
