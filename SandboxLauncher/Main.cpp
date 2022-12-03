@@ -1,4 +1,5 @@
 // Windows API
+#include <winrt/base.h>
 #include <Windows.h>
 #include <sddl.h>
 
@@ -18,6 +19,11 @@ PSID lowIlPsid;
 HRESULT CreateLowILProcess(int argc, char** argv) noexcept
 {
   wstring commandLine = L"SandboxTest.exe";
+  for (int i = 1; i < argc; i++)
+  {
+     commandLine += L" ";
+     commandLine += winrt::to_hstring(argv[i]).c_str();
+  }
   wstring eventSyncName =
       L"60758A28-A98E-47F8-84D8-795A8D5A0C54"; // Random string
 
