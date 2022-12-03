@@ -15,7 +15,7 @@ static constexpr const WCHAR *privNetSidStr = L"S-1-15-3-3";
 
 PROCESS_INFORMATION processInfoSandbox;
 PSID lowIlPsid;
-HRESULT CreateLowILProcess() noexcept
+HRESULT CreateLowILProcess(int argc, char** argv) noexcept
 {
   wstring commandLine = L"SandboxTest.exe";
   wstring eventSyncName =
@@ -100,5 +100,5 @@ HRESULT CreateLowILProcess() noexcept
 
 int main(int argc, char ** argv)
 {
-  auto ans = CreateLowILProcess();
+  auto ans = CreateLowILProcess(argc, argv);
 }
