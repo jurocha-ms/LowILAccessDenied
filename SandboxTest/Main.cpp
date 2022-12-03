@@ -121,24 +121,31 @@ IAsyncAction SendReceive()
 	using winrt::Windows::Storage::Streams::UnicodeEncoding;
 	try
 	{
+		auto received = CreateEventA(nullptr, false, false, nullptr);
+
 		auto socket = MessageWebSocket{};
 		socket.Control().MessageType(SocketMessageType::Utf8);
-		/*auto mrt = */socket.MessageReceived([](IWebSocket const& sender, MessageWebSocketMessageReceivedEventArgs const& args)
+		socket.MessageReceived([&received](IWebSocket const& sender, MessageWebSocketMessageReceivedEventArgs const& args)
 			{
 				auto reader = args.GetDataReader();
 				reader.UnicodeEncoding(UnicodeEncoding::Utf8);
 
 				auto message = reader.ReadString(reader.UnconsumedBufferLength());
-				wprintf(L"\n[SUCCESS]\nWS MESSAGE:\n%s\n\n", message.c_str());
+				if (message != L"echo.websocket.events sponsored by Lob.com")
+				{
+					wprintf(L"\n[SUCCESS]\nWS MESSAGE:\n%s\n\n", message.c_str());
+
+					winrt::check_bool(SetEvent(received));
+				}
 			});
 
 		co_await socket.ConnectAsync(Uri{ L"wss://echo.websocket.events" });
 
-		//co_await mrt;
-
 		auto writer = DataWriter{ socket.OutputStream() };
 		auto sent = writer.WriteString(L"ECHO ME");
 		auto asyncSent = co_await writer.StoreAsync();
+
+		co_await winrt::resume_on_signal(received);
 
 		socket.Close();
 	}
